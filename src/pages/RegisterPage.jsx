@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector, } from 'react-redux';
 import { registerUser } from '../redux/authSlice';
 import Spinner from '../components/Spinner'
 const RegisterPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   
   const { loading, user, error } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });

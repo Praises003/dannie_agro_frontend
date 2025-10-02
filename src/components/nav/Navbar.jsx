@@ -42,10 +42,12 @@ const Navbar = () => {
 
         {/* Buttons */}
         <div className="flex items-center space-x-4">
-          <button className="bg-primary text-white px-4 py-2 rounded-md hover:bg-opacity-90 transition flex items-center">
+          <Link to={'/login'} className="bg-primary text-white px-4 py-2 rounded-md hover:bg-opacity-90 transition flex items-center">
             <FiUser className="mr-2" />
             Login
-          </button>
+          </Link>
+
+          
 
           {/* Mobile Menu Toggle */}
           <button className="md:hidden" onClick={toggleMobileMenu}>

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { loginUser } from '../redux/authSlice';
 import { toast } from 'react-toastify';
+import Spinner from "../components/Spinner"
 
 const LoginPage = () => {
   const dispatch = useDispatch();
