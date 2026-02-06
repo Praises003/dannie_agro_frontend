@@ -11,22 +11,22 @@ const FeaturesComponent = () => {
   const features = [
     {
       icon: <FiShield className="text-primary" size={24} />,
-      title: 'Quality Products',
-      description: 'We source only the finest agricultural products to ensure your satisfaction and health.',
+      title: 'Accountability',
+      description: 'We take responsibility for our actions and products.',
       color: 'primary',
       delay: '0',
     },
     {
       icon: <FiUsers className="text-secondary" size={24} />,
-      title: 'Community Focus',
-      description: 'Our MLM program empowers individuals to build businesses and earn substantial income.',
+      title: 'Integrity',
+      description: ' We operate with honesty, ethics, and morality.',
       color: 'secondary',
       delay: '100',
     },
     {
       icon: <FiGlobe className="text-primary" size={24} />,
-      title: 'Sustainable Growth',
-      description: 'We\'re committed to sustainable agricultural practices that benefit both people and planet.',
+      title: 'Transparency',
+      description: 'We maintain openness in our business practices.',
       color: 'primary',
       delay: '200',
     },

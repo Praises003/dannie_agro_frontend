@@ -1,48 +1,125 @@
-import React, { useState } from 'react';
-import { FaUserCircle, FaSignOutAlt, FaCopy, FaShoppingCart, FaWallet, FaEdit } from 'react-icons/fa';
-
-const mockUser = {
-  name: 'Adebayo Johnson',
-  referralCode: 'DANNIE12345',
-  points: 240,
-  earnings: 150000,
-  referrals: 12,
-  rank: 'Silver',
-  orders: [
-    { id: 'ORD001', products: 'Premium Rice, Poultry Feed', total: 23000, status: 'Delivered', date: '2025-09-29' },
-    { id: 'ORD002', products: 'Organic Beans', total: 12500, status: 'Pending', date: '2025-09-25' },
-  ],
-  commissions: [
-    { source: 'Chioma Eze', level: 1, amount: 500, status: 'Paid', date: '2025-09-30' },
-    { source: 'Oluwaseun Adeleke', level: 2, amount: 250, status: 'Pending', date: '2025-09-28' },
-  ],
-  directReferrals: [
-    { name: 'Chioma Eze', email: 'chioma@example.com', points: 120 },
-    { name: 'Oluwaseun Adeleke', email: 'oluwa@example.com', points: 80 },
-  ],
-};
+import React, { useEffect, useState } from "react"
+import axios from "axios"
+import {
+  FaUserCircle,
+  FaSignOutAlt,
+  FaCopy,
+  FaShoppingCart,
+  FaWallet,
+  FaEdit,
+} from "react-icons/fa"
 
 const UserDashboard = () => {
-  const [copied, setCopied] = useState(false);
+  const [user, setUser] = useState({
+    name: "",
+    points: 0,
+    earnings: 0,
+    rank: "Starter",
+    referralCode: "N/A",
+  })
+
+  const [orders, setOrders] = useState([])
+  const [commissions, setCommissions] = useState([])
+  const [referrals, setReferrals] = useState([])
+
+  const [copied, setCopied] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+
+  const today = new Date().toLocaleDateString(undefined, {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  })
+
+  // 🔗 Fetch dashboard data
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const [
+          userRes,
+          ordersRes,
+          commissionsRes,
+          referralsRes,
+        ] = await Promise.all([
+          axios.get("/api/v1/users/me"),
+          axios.get("/api/v1/orders/me"),
+          axios.get("/api/v1/commissions/me"),
+          axios.get("/api/v1/users/me/referrals"),
+        ])
+
+        setUser({
+          name: userRes.data?.name || "",
+          points: userRes.data?.points ?? 0,
+          earnings: userRes.data?.earnings ?? 0,
+          rank: userRes.data?.rank || "Starter",
+          referralCode: userRes.data?.referralCode || "N/A",
+        })
+
+        setOrders(Array.isArray(ordersRes.data) ? ordersRes.data : [])
+        setCommissions(
+          Array.isArray(commissionsRes.data) ? commissionsRes.data : []
+        )
+        setReferrals(
+          Array.isArray(referralsRes.data) ? referralsRes.data : []
+        )
+      } catch (err) {
+        console.error("Dashboard load error:", err)
+        setError(true)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDashboardData()
+  }, [])
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(mockUser.referralCode);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+    if (!user.referralCode || user.referralCode === "N/A") return
+    navigator.clipboard.writeText(user.referralCode)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
-  const today = new Date().toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+  // 🔄 Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-lg font-semibold text-gray-600">
+          Loading dashboard...
+        </p>
+      </div>
+    )
+  }
+
+  // ❌ Error state
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-red-500 font-semibold">
+          Unable to load dashboard. Please try again later.
+        </p>
+      </div>
+    )
+  }
 
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Header */}
       <header className="bg-white shadow p-4 flex justify-between items-center">
-        <div className="text-xl font-bold text-primary">Dannie Agro</div>
+        <div className="text-xl font-bold text-primary">
+          Dannie Agricultural Products
+        </div>
+
         <div className="relative group">
-          <FaUserCircle size={30} className="text-secondary cursor-pointer" />
+          <FaUserCircle size={30} className="cursor-pointer text-secondary" />
           <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-md hidden group-hover:block z-10">
-            <a href="/profile" className="block px-4 py-2 text-sm hover:bg-gray-100">My Profile</a>
-            <a href="/settings" className="block px-4 py-2 text-sm hover:bg-gray-100">Settings</a>
+            <a href="/profile" className="block px-4 py-2 text-sm hover:bg-gray-100">
+              My Profile
+            </a>
+            <a href="/settings" className="block px-4 py-2 text-sm hover:bg-gray-100">
+              Settings
+            </a>
             <button className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 flex items-center gap-2 text-red-500">
               <FaSignOutAlt /> Logout
             </button>
@@ -52,136 +129,154 @@ const UserDashboard = () => {
 
       {/* Welcome */}
       <div className="p-4 text-center">
-        <h1 className="text-2xl font-bold text-dark">Welcome back, {mockUser.name}!</h1>
+        <h1 className="text-2xl font-bold text-dark">
+          Welcome back, {user.name || "User"}!
+        </h1>
         <p className="text-gray-600 mt-1">{today}</p>
       </div>
 
-      {/* Stats Cards */}
+      {/* Stats */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 px-4 my-6">
         {[
-          { label: 'Current Points', value: mockUser.points },
-          { label: 'Total Earnings', value: `₦${mockUser.earnings.toLocaleString()}` },
-          { label: 'Referral Count', value: mockUser.referrals },
-          { label: 'Rank', value: mockUser.rank },
+          { label: "Current Points", value: user.points },
+          {
+            label: "Total Earnings",
+            value: `₦${user.earnings.toLocaleString()}`,
+          },
+          { label: "Referral Count", value: referrals.length },
+          { label: "Rank", value: user.rank },
         ].map((stat, i) => (
-          <div key={i} className="bg-white p-6 rounded-lg shadow-md text-center hover:shadow-lg transition">
-            <h3 className="text-lg text-gray-600">{stat.label}</h3>
-            <p className="text-xl font-bold text-primary mt-2">{stat.value}</p>
+          <div key={i} className="bg-white p-6 rounded-lg shadow text-center">
+            <h3 className="text-gray-600">{stat.label}</h3>
+            <p className="text-xl font-bold text-primary mt-2">
+              {stat.value}
+            </p>
           </div>
         ))}
       </div>
 
       {/* Referral Section */}
       <div className="px-4 my-6">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-bold text-dark mb-4">Your Referral Link</h2>
-          <div className="flex items-center justify-between bg-gray-100 p-3 rounded-md">
-            <span className="text-sm text-gray-700 font-mono">{mockUser.referralCode}</span>
-            <button
-              onClick={handleCopy}
-              className="text-secondary font-medium flex items-center gap-2 hover:text-primary"
-            >
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h2 className="text-xl font-bold mb-4">Your Referral Code</h2>
+
+          <div className="flex justify-between bg-gray-100 p-3 rounded">
+            <span className="font-mono">{user.referralCode}</span>
+            <button onClick={handleCopy} className="flex items-center gap-2">
               <FaCopy />
-              {copied ? 'Copied!' : 'Copy'}
+              {copied ? "Copied!" : "Copy"}
             </button>
           </div>
 
-          {/* Genealogy Preview */}
-          <h3 className="text-lg font-semibold mt-6 mb-2">Your Referrals</h3>
-          <ul className="space-y-2">
-            {mockUser.directReferrals.map((r, i) => (
-              <li key={i} className="border p-3 rounded-md flex justify-between items-center">
-                <div>
-                  <p className="font-bold text-dark">{r.name}</p>
-                  <p className="text-sm text-gray-500">{r.email}</p>
-                </div>
-                <p className="text-sm text-primary font-semibold">{r.points} pts</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+          <h3 className="mt-6 font-semibold">Direct Referrals</h3>
 
-      {/* Orders Section */}
-      <div className="px-4 my-6">
-        <div className="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
-          <h2 className="text-xl font-bold mb-4 text-dark">Recent Orders</h2>
-          <table className="w-full text-sm text-left">
-            <thead>
-              <tr className="text-gray-600 border-b">
-                <th className="py-2 px-4">Order ID</th>
-                <th className="py-2 px-4">Products</th>
-                <th className="py-2 px-4">Total</th>
-                <th className="py-2 px-4">Status</th>
-                <th className="py-2 px-4">Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {mockUser.orders.map((order, i) => (
-                <tr key={i} className="border-b">
-                  <td className="py-2 px-4">{order.id}</td>
-                  <td className="py-2 px-4">{order.products}</td>
-                  <td className="py-2 px-4">₦{order.total.toLocaleString()}</td>
-                  <td className="py-2 px-4">{order.status}</td>
-                  <td className="py-2 px-4">{order.date}</td>
-                </tr>
+          {referrals.length === 0 ? (
+            <p className="text-gray-500 mt-3">
+              No referrals yet. Share your referral code to start earning.
+            </p>
+          ) : (
+            <ul className="mt-2 space-y-2">
+              {referrals.map((r) => (
+                <li
+                  key={r.id}
+                  className="border p-3 rounded flex justify-between"
+                >
+                  <div>
+                    <p className="font-semibold">{r.name}</p>
+                    <p className="text-sm text-gray-500">{r.email}</p>
+                  </div>
+                  <span className="text-primary font-bold">
+                    {(r.points ?? 0)} pts
+                  </span>
+                </li>
               ))}
-            </tbody>
-          </table>
-          <div className="text-right mt-4">
-            <a href="/orders" className="text-secondary font-medium hover:underline">
-              View all
-            </a>
-          </div>
+            </ul>
+          )}
         </div>
       </div>
 
-      {/* Commission Section */}
-      <div className="px-4 my-6">
-        <div className="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
-          <h2 className="text-xl font-bold mb-4 text-dark">Commission History</h2>
-          <table className="w-full text-sm text-left">
-            <thead>
-              <tr className="text-gray-600 border-b">
-                <th className="py-2 px-4">Source</th>
-                <th className="py-2 px-4">Level</th>
-                <th className="py-2 px-4">Amount</th>
-                <th className="py-2 px-4">Status</th>
-                <th className="py-2 px-4">Date</th>
+      {/* Orders */}
+      <div className="px-4 my-6 bg-white p-6 rounded shadow overflow-x-auto">
+        <h2 className="text-xl font-bold mb-4">Recent Orders</h2>
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b text-gray-600">
+              <th>Order ID</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orders.length === 0 ? (
+              <tr>
+                <td colSpan="4" className="text-center py-6 text-gray-500">
+                  No orders yet. Start shopping to see your orders here.
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {mockUser.commissions.map((c, i) => (
-                <tr key={i} className="border-b">
-                  <td className="py-2 px-4">{c.source}</td>
-                  <td className="py-2 px-4">{c.level}</td>
-                  <td className="py-2 px-4">₦{c.amount}</td>
-                  <td className="py-2 px-4">{c.status}</td>
-                  <td className="py-2 px-4">{c.date}</td>
+            ) : (
+              orders.map((o) => (
+                <tr key={o.id} className="border-b">
+                  <td>{o.id}</td>
+                  <td>₦{(o.totalAmount ?? 0).toLocaleString()}</td>
+                  <td>{o.status}</td>
+                  <td>
+                    {new Date(o.createdAt).toLocaleDateString()}
+                  </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
 
-      {/* Quick Actions */}
+      {/* Commissions */}
+      <div className="px-4 my-6 bg-white p-6 rounded shadow overflow-x-auto">
+        <h2 className="text-xl font-bold mb-4">Commission History</h2>
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b text-gray-600">
+              <th>From</th>
+              <th>Level</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {commissions.length === 0 ? (
+              <tr>
+                <td colSpan="4" className="text-center py-6 text-gray-500">
+                  No commissions yet. Invite others to start earning.
+                </td>
+              </tr>
+            ) : (
+              commissions.map((c) => (
+                <tr key={c.id} className="border-b">
+                  <td>{c.sourceUser?.name || "N/A"}</td>
+                  <td>{c.level}</td>
+                  <td>₦{(c.amount ?? 0).toLocaleString()}</td>
+                  <td>{c.status}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Actions */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 px-4 my-10">
-        <a href="/products" className="bg-primary text-white p-6 rounded-lg shadow-md flex items-center gap-4 hover:bg-opacity-90 transition">
-          <FaShoppingCart size={24} />
-          <span className="font-semibold">Shop Products</span>
+        <a href="/products" className="bg-primary text-white p-6 rounded shadow flex gap-3">
+          <FaShoppingCart /> Shop Products
         </a>
-        <a href="/withdraw" className="bg-secondary text-dark p-6 rounded-lg shadow-md flex items-center gap-4 hover:bg-opacity-90 transition">
-          <FaWallet size={24} />
-          <span className="font-semibold">Withdraw Earnings</span>
+        <a href="/withdraw" className="bg-secondary p-6 rounded shadow flex gap-3">
+          <FaWallet /> Withdraw Earnings
         </a>
-        <a href="/profile" className="bg-white p-6 rounded-lg shadow-md flex items-center gap-4 hover:shadow-lg transition">
-          <FaEdit size={24} className="text-secondary" />
-          <span className="font-semibold">Update Profile</span>
+        <a href="/profile" className="bg-white p-6 rounded shadow flex gap-3">
+          <FaEdit /> Update Profile
         </a>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default UserDashboard;
+export default UserDashboard

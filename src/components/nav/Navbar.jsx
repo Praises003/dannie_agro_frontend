@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiUser, FiMenu } from 'react-icons/fi';
+import logo from "../../assets/logo.jpg";
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -14,7 +15,7 @@ const Navbar = () => {
         {/* Logo */}
         <div className="flex items-center space-x-4">
           <img
-            src="http://static.photos/agriculture/200x200/1"
+            src={logo}
             alt="Dannie Agricultural Logo"
             className="h-12 w-auto"
           />
