@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react"
 import axios from "axios"
+import api from '../utils/api';
 import {
   FaUserCircle,
   FaSignOutAlt,
@@ -42,7 +43,7 @@ const UserDashboard = () => {
           commissionsRes,
           referralsRes,
         ] = await Promise.all([
-          axios.get("/api/v1/users/me"),
+          api.get("api/users/profile"),
           axios.get("/api/v1/orders/me"),
           axios.get("/api/v1/commissions/me"),
           axios.get("/api/v1/users/me/referrals"),
