@@ -35,45 +35,52 @@ const UserDashboard = () => {
 
   // 🔗 Fetch dashboard data
   useEffect(() => {
-    const fetchDashboardData = async () => {
+  const fetchDashboardData = async () => {
+    try {
+      // Profile is REQUIRED
+      const userRes = await api.get("api/users/profile");
+
+      setUser({
+        name: userRes.data?.name || "",
+        points: userRes.data?.points ?? 0,
+        earnings: userRes.data?.earnings ?? 0,
+        rank: userRes.data?.rank || "Starter",
+        referralCode: userRes.data?.referralCode || "N/A",
+      });
+
+      // OPTIONAL DATA — fail silently
       try {
-        const [
-          userRes,
-          ordersRes,
-          commissionsRes,
-          referralsRes,
-        ] = await Promise.all([
-          api.get("api/users/profile"),
-          axios.get("/api/v1/orders/me"),
-          axios.get("/api/v1/commissions/me"),
-          axios.get("/api/v1/users/me/referrals"),
-        ])
-
-        setUser({
-          name: userRes.data?.name || "",
-          points: userRes.data?.points ?? 0,
-          earnings: userRes.data?.earnings ?? 0,
-          rank: userRes.data?.rank || "Starter",
-          referralCode: userRes.data?.referralCode || "N/A",
-        })
-
-        setOrders(Array.isArray(ordersRes.data) ? ordersRes.data : [])
-        setCommissions(
-          Array.isArray(commissionsRes.data) ? commissionsRes.data : []
-        )
-        setReferrals(
-          Array.isArray(referralsRes.data) ? referralsRes.data : []
-        )
-      } catch (err) {
-        console.error("Dashboard load error:", err)
-        setError(true)
-      } finally {
-        setLoading(false)
+        const ordersRes = await api.get("api/v1/orders/me");
+        setOrders(Array.isArray(ordersRes.data) ? ordersRes.data : []);
+      } catch {
+        setOrders([]);
       }
-    }
 
-    fetchDashboardData()
-  }, [])
+      try {
+        const commissionsRes = await api.get("api/v1/commissions/me");
+        setCommissions(Array.isArray(commissionsRes.data) ? commissionsRes.data : []);
+      } catch {
+        setCommissions([]);
+      }
+
+      try {
+        const referralsRes = await api.get("api/v1/users/me/referrals");
+        setReferrals(Array.isArray(referralsRes.data) ? referralsRes.data : []);
+      } catch {
+        setReferrals([]);
+      }
+
+    } catch (err) {
+      console.error("Critical dashboard error:", err);
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchDashboardData();
+}, []);
+
 
   const handleCopy = () => {
     if (!user.referralCode || user.referralCode === "N/A") return
