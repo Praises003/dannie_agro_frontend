@@ -68,7 +68,7 @@ const UserDashboard = () => {
       }
 
       try {
-        const referralsRes = await api.get("api/v1/users/me/referrals");
+        const referralsRes = await api.get("api/users/me/referrals");
         setReferrals(Array.isArray(referralsRes.data) ? referralsRes.data : []);
       } catch {
         setReferrals([]);
