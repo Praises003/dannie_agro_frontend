@@ -33,6 +33,10 @@ const UserDashboard = () => {
     day: "numeric",
   })
 
+  const referralLink = user.referralCode && user.referralCode !== "N/A"
+  ? `${window.location.origin}/register?ref=${user.referralCode}`
+  : "";
+
   // 🔗 Fetch dashboard data
   useEffect(() => {
   const fetchDashboardData = async () => {
@@ -83,12 +87,12 @@ const UserDashboard = () => {
 
 
   const handleCopy = () => {
-    if (!user.referralCode || user.referralCode === "N/A") return
-    navigator.clipboard.writeText(user.referralCode)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+  if (!referralLink) return;
 
+  navigator.clipboard.writeText(referralLink);
+  setCopied(true);
+  setTimeout(() => setCopied(false), 2000);
+};
   // 🔄 Loading state
   if (loading) {
     return (
@@ -170,7 +174,12 @@ const UserDashboard = () => {
           <h2 className="text-xl font-bold mb-4">Your Referral Code</h2>
 
           <div className="flex justify-between bg-gray-100 p-3 rounded">
-            <span className="font-mono">{user.referralCode}</span>
+            <input
+              type="text"
+              value={referralLink}
+              readOnly
+              className="flex-1 bg-transparent font-mono outline-none"
+            />
             <button onClick={handleCopy} className="flex items-center gap-2">
               <FaCopy />
               {copied ? "Copied!" : "Copy"}
