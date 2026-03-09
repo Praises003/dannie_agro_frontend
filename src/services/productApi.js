@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const API = axios.create({
-  baseURL: "http://localhost:25491/api/"
+  baseURL: "https://dannie-agro.onrender.com/api"
 })
 
 export const getProducts = async (params) => {
