@@ -8,7 +8,7 @@ import { Route,  Routes } from 'react-router-dom'
 import RegisterPage from './pages/RegisterPage'
 import LoginPage from './pages/LoginPage'
 import UserDashboard from './pages/UserDashboard'
-import Dashboard from './pages/test'
+//import Dashboard from './pages/test'
 import ProductsPage from "./pages/ProductsPage"
 
 import AboutPage from './pages/About'
@@ -28,7 +28,7 @@ function App() {
         <Route path='/login' element={<LoginPage />} />
         <Route path='/dashboard' element={<UserDashboard />} />
         <Route path="/products" element={<ProductsPage />} />
-        <Route path='/test' element={<Dashboard />} />
+        {/*<Route path='/test' element={<Dashboard />} /> */}
         
         
       </Routes>
