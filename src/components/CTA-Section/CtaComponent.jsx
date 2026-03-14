@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import AOS from 'aos';
+import { Link } from 'react-router-dom';
 import 'aos/dist/aos.css';
 
 const CtaComponent = () => {
@@ -16,9 +17,9 @@ const CtaComponent = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <button className="bg-primary text-white font-bold px-8 py-3 rounded-md hover:bg-opacity-90 transition">
+          <Link to="/products" className="bg-primary text-white font-bold px-8 py-3 rounded-md hover:bg-opacity-90 transition">
             Shop Products
-          </button>
+          </Link>
           <button className="bg-white text-dark font-bold px-8 py-3 rounded-md hover:bg-opacity-90 transition">
             Join MLM Program
           </button>

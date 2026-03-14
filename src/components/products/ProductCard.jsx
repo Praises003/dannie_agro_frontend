@@ -1,10 +1,14 @@
 import React from "react"
+import { useCart } from "../../context/CartContext"
 
 const ProductCard = ({ product }) => {
-  return (
-    <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition duration-300 border">
 
-      <img
+  const { addToCart } = useCart()
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm hover:shadow-md border">
+
+      <img  
         src={product.image}
         alt={product.name}
         className="w-full h-52 object-cover rounded-t-xl"
@@ -12,19 +16,18 @@ const ProductCard = ({ product }) => {
 
       <div className="p-4 space-y-2">
 
-        <h3 className="text-lg font-semibold text-gray-800">
+        <h3 className="text-lg font-semibold">
           {product.name}
         </h3>
 
-        <p className="text-xl font-bold text-green-600">
+        <p className="text-green-600 font-bold">
           ₦{product.price}
         </p>
 
-        <p className="text-sm text-gray-500">
-          Earn <span className="font-medium text-blue-600">{product.points}</span> points
-        </p>
-
-        <button className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800 transition">
+        <button
+          onClick={() => addToCart(product.id)}
+          className="w-full bg-black text-white py-2 rounded-lg hover:bg-gray-800"
+        >
           Add to Cart
         </button>
 

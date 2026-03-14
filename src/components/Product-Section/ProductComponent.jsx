@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { FiShoppingCart, FiArrowRight } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import ProductCard from './ProductCard';
@@ -44,9 +45,9 @@ const ProductsSection = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-12">
           <h2 className="text-3xl font-bold text-primary">Our Products</h2>
-          <a href="#" className="text-secondary font-medium flex items-center">
+          <Link to="/products" className="text-secondary font-medium flex items-center">
             View All <FiArrowRight className="ml-2" />
-          </a>
+          </Link>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">

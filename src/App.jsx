@@ -10,6 +10,8 @@ import LoginPage from './pages/LoginPage'
 import UserDashboard from './pages/UserDashboard'
 //import Dashboard from './pages/test'
 import ProductsPage from "./pages/ProductsPage"
+import CartPage from "./pages/CartPage"
+import { CartProvider } from "./context/CartContext";
 
 import AboutPage from './pages/About'
 
@@ -19,19 +21,21 @@ function App() {
 
   return (
     <>  
-    
-      <Navbar />
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/about' element={<AboutPage />} />
-        <Route path='/register' element={<RegisterPage />} />
-        <Route path='/login' element={<LoginPage />} />
-        <Route path='/dashboard' element={<UserDashboard />} />
-        <Route path="/products" element={<ProductsPage />} />
-        {/*<Route path='/test' element={<Dashboard />} /> */}
-        
-        
-      </Routes>
+        <CartProvider>
+          <Navbar />
+          <Routes>
+            <Route path='/' element={<Home />} />
+            <Route path='/about' element={<AboutPage />} />
+            <Route path='/register' element={<RegisterPage />} />
+            <Route path='/login' element={<LoginPage />} />
+            <Route path='/dashboard' element={<UserDashboard />} />
+            <Route path="/products" element={<ProductsPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            {/*<Route path='/test' element={<Dashboard />} /> */}
+            
+            
+          </Routes>
+        </CartProvider>
     </>
   )
 }
