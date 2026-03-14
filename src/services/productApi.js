@@ -1,8 +1,7 @@
 import axios from "axios"
 
 const API = axios.create({
-  baseURL: "https://dannie-agro.onrender.com/api",
-  withCredentials: true
+  baseURL: "https://dannie-agro.onrender.com/api"
 })
 
 export const getProducts = async (params) => {
