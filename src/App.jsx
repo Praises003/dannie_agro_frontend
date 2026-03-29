@@ -11,6 +11,8 @@ import UserDashboard from './pages/UserDashboard'
 //import Dashboard from './pages/test'
 import ProductsPage from "./pages/ProductsPage"
 import CartPage from "./pages/CartPage"
+import ProfilePage from "./pages/ProfilePage"
+import OnboardingPage from "./pages/OnboardingPage"
 import { CartProvider } from "./context/CartContext";
 
 import AboutPage from './pages/About'
@@ -31,6 +33,10 @@ function App() {
             <Route path='/dashboard' element={<UserDashboard />} />
             <Route path="/products" element={<ProductsPage />} />
             <Route path="/cart" element={<CartPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/onboarding" element={<OnboardingPage />} />
+
+
             {/*<Route path='/test' element={<Dashboard />} /> */}
             
             

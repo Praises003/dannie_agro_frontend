@@ -54,9 +54,11 @@ const RegisterPage = () => {
     }
 
     if (user) {
-      localStorage.removeItem("referral_data");
-      navigate("/dashboard");
-    }
+    const target = user.onboardingCompleted ? "/dashboard" : "/onboarding";
+    localStorage.removeItem("referral_data");
+    navigate(target);
+  }
+
   }, [user, error, navigate]);
 
   /* ===============================

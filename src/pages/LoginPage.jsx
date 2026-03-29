@@ -17,9 +17,10 @@ const LoginPage = () => {
         toast.error(error)
     }
 
-    if(user) {
-        navigate("/dashboard")
-    }
+    if (user) {
+    const target = user.onboardingCompleted ? "/dashboard" : "/onboarding";
+    navigate(target);
+  }
 
   }, [dispatch, navigate, user, error])
 
